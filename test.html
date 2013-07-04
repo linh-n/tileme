@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>tileMe Test</title>
+    <script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tileme.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div id="gallery">
+    </div>
+    <a href="#" id="add">Add</a>
+</body>
+<script type="text/javascript">
+    function add() {
+        for (i = 0 ; i < 20; i++) {
+            var randW = Math.floor((Math.random() * 2) + 1);
+            var randH = Math.floor((Math.random() * 2) + 1);
+            $('#gallery').append('<div data-cols="' + randW + '" data-rows="' + randH + '">' + randW + ' x ' + randH + '</div>');
+        }
+    }
+    add();
+    $('#gallery').tileMe('div', {
+        baseWidth: 200,
+        baseHeight: 200,
+        spacing: 5,
+        retileOnReisze: true,
+        onElementTiled: function (e) {
+            e.css({ 'line-height': e.height() + 'px' });
+        },
+        onTileComplete: function (e) {
+        }
+    });
+
+    $('#add').click(function () {
+        add();
+        var m = $('#gallery').data('tileMe');
+        m.add();
+        return false;
+    });
+</script>
+</html>
