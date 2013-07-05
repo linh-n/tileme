@@ -9,17 +9,19 @@
     var self = $(container);
     var obj = this;
     var defaults = {
-      baseWidth: 200,
+      baseWidth: 200,         // base size of one "block"
       baseHeight: 200,
-      spacing: 2,
-      dataCols: 'data-cols',
+      spacing: 1,             // space between 2 elements
+      dataCols: 'data-cols',  // get cols & rows from elements. use baseWidth & height to determine size of elements
       dataRows: 'data-rows',
-      tiledClass: 'tiled',
-      failedClass: 'failed',
-      retileOnReisze: false,
+      tiledClass: 'tiled',    // add this class after tiled
+      failedClass: 'failed',  // cannot tiled, must resize, add thsi class
+      retileOnResize: false,  // not used yet
       // callbacks
-      onElementTiled: function (e) { },
-      onTileComplete: function (e) { },
+      onElementTiling: function (e) { },
+      onElementTiled: function (e) { }, // e: an element just tiled
+      onTileComplete: function (e) { }, // e: container
+      onTiling: function (e) { }
     };
     var settings = $.extend({}, defaults, options);
 
@@ -30,26 +32,17 @@
     var positions = new Array();
     var totalCols;
 
-    var MAX_FAILED_TIMES = 2;
+    var MAX_FAILED_TIMES = 3;
 
-
-    // events
-    var t;
-    if (settings.retileOnReisze) {
-      $(window).resize(function () {
-        clearTimeout(t);
-        t = setTimeout(function () { init(); }, 1000);
-      });
-    }
 
     // public
-    this.add = function () {
+    this.addedMore = function () {
       doTile();
     };
 
     // private
     var init = function () {
-      self.css({ 'position' : 'relative' });
+      self.css({ 'position': 'relative' });
       containerWidth = self.width();
       totalCols = Math.ceil(containerWidth / settings.baseWidth);
 
@@ -68,6 +61,7 @@
     }
 
     var doTile = function () {
+      settings.onTiling(self);
       elements = self.find(childSelector);
       while (elements.not('.' + settings.tiledClass).length > 0) {
         var element = elements.not('.' + settings.tiledClass).first();
@@ -89,6 +83,7 @@
     };
 
     var tileElement = function (element) {
+      settings.onElementTiling(element);
       var lowestLevel = Infinity,  // should be lowest number available
           bestcol = 0,  // col to insert
           posWidth = 0, // number of cols available from that position
