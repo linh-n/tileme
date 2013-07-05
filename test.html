@@ -13,7 +13,7 @@
 </body>
 <script type="text/javascript">
     function add() {
-        for (i = 0 ; i < 20; i++) {
+        for (i = 0 ; i < 150; i++) {
             var randW = Math.floor((Math.random() * 2) + 1);
             var randH = Math.floor((Math.random() * 2) + 1);
             $('#gallery').append('<div data-cols="' + randW + '" data-rows="' + randH + '">' + randW + ' x ' + randH + '</div>');
@@ -21,12 +21,11 @@
     }
     add();
     $('#gallery').tileMe('div', {
-        baseWidth: 200,
-        baseHeight: 200,
-        spacing: 5,
+        baseWidth: 100,
+        baseHeight: 100,
+        spacing: 3,
         retileOnReisze: true,
         onElementTiled: function (e) {
-            e.css({ 'line-height': e.height() + 'px' });
         },
         onTileComplete: function (e) {
         }
@@ -35,7 +34,7 @@
     $('#add').click(function () {
         add();
         var m = $('#gallery').data('tileMe');
-        m.add();
+        m.addedMore();
         return false;
     });
 </script>

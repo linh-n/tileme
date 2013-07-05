@@ -27,20 +27,26 @@
 
     var elements;
     var containerWidth;
-    var baseWidth, baseHeight, baseLeft = 0;
+    var baseWidth, baseHeight;
+    var baseOffset = settings.spacing / 2;
 
+    // store current "baseline" (lowest level) of elements. 
+    // e.g: [1, 2, 0, 0] : 4 columns, 1 block on the first col and 2 blocks on 2nd col
     var positions = new Array();
+    // total columns
     var totalCols;
 
+    // always find the space on top of baseline to insert elements
+    // cannot insert, fail once, move to the end to tile again
+    // if an element reaches max failed times, it will be resized to fit
     var MAX_FAILED_TIMES = 3;
 
 
-    // public
+    // when some elements are added to the container, call this function to tile them
     this.addedMore = function () {
       doTile();
     };
 
-    // private
     var init = function () {
       self.css({ 'position': 'relative' });
       containerWidth = self.width();
@@ -147,6 +153,7 @@
           element.addClass(settings.failedClass);
           positionElement(element, cols, rows, mostSuitCol);
         }
+        // put this to the end for later tiling
         element.attr('data-failed', failedTimes).remove().appendTo(self);
       }
       return found;
@@ -156,15 +163,10 @@
       var elementWidth = baseWidth * cols - settings.spacing;
       var elementHeight = baseHeight * rows - settings.spacing;
 
-      //if (cols + columnToInsert == totalCols && elementWidth < settings.baseWidth - settings.spacing)
-      //{
-      //  elementWidth += settings.spacing / 2;
-      //}
-
       // positioning element
       element.width(elementWidth);
       element.height(elementHeight);
-      element.css({ position: 'absolute', top: (positions[columnToInsert] * baseHeight) + 'px', left: (baseLeft + columnToInsert * baseWidth) + 'px' });
+      element.css({ position: 'absolute', top: (positions[columnToInsert] * baseHeight + baseOffset) + 'px', left: (baseOffset + columnToInsert * baseWidth) + 'px' });
 
       // update positions
       for (i = columnToInsert; i < columnToInsert + cols; i++) {
